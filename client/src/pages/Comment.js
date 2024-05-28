@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../UserContext";
 
-export default function Comment({ comment, postInfo }) {
+export default function Comment({ comment, postInfo, setPostInfo }) {
   const [commentInfo, setCommentInfo] = useState("");
   const { userInfo } = useContext(UserContext);
 
@@ -10,10 +10,15 @@ export default function Comment({ comment, postInfo }) {
       (response) => {
         response.json().then((commentInfo) => {
           setCommentInfo(commentInfo);
+          // console.log(postInfo);
         });
       }
     );
   }, [comment]);
+
+  // const handleDelete = () => {
+  //   handleDeleteComment(comment); // Call the function with the comment ID
+  // };
 
   const deleteComment = () => {
     try {
@@ -24,7 +29,12 @@ export default function Comment({ comment, postInfo }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ postId: postInfo._id }),
-      });
+      })
+        .then((response) => response.json())
+        .then((updatedPostInfo) => {
+          setPostInfo(updatedPostInfo);
+          // setNewComment(""); // Clear the input field after adding the comment
+        });
     } catch (error) {
       console.error("Error deleting comment:", error);
     }

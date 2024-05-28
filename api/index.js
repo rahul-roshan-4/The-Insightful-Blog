@@ -95,19 +95,17 @@ app.get("/profile", (req, res) => {
 });
 
 app.post("/add-comment", async (req, res) => {
-  const { postId, text, authorName } = req.body;
+  const { postId, text } = req.body;
   const { token } = req.cookies;
-  // console.log(authorName)
+
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: Token missing" });
   }
 
   try {
-    // Verify the token
     const decodedToken = jwt.verify(token, secret);
 
-    // Find the post by postId
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate("author", ["username"]);
 
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
@@ -119,7 +117,7 @@ app.post("/add-comment", async (req, res) => {
       author: {
         id: decodedToken.id,
       },
-      authorName,
+      // authorName,
     });
 
     post.comments.push(newComment._id);
@@ -137,11 +135,13 @@ app.post("/add-comment", async (req, res) => {
 // });
 app.post("/logout", (req, res) => {
   // Clear the token cookie
-  res.cookie("token", "", {
-    sameSite: "None", // Ensure the cookie is sent for cross-site requests
-    secure: true,     // Require HTTPS
-    expires: new Date(0) // Set expiration date to remove the cookie immediately
-  }).json("ok");
+  res
+    .cookie("token", "", {
+      sameSite: "None", // Ensure the cookie is sent for cross-site requests
+      secure: true, // Require HTTPS
+      expires: new Date(0), // Set expiration date to remove the cookie immediately
+    })
+    .json("ok");
 });
 
 app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
@@ -235,6 +235,73 @@ app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
   }
 });
 
+// POST route to handle liking a post
+app.post("/post/like/:id", async (req, res) => {
+  const { id } = req.params;
+  const { userId, action } = req.body;
+  // console.log(id, userId)
+  try {
+    const postDoc = await Post.findById(id);
+    if (!postDoc) {
+      return res.status(404).send({ error: "Post not found" });
+    }
+
+    // if (postDoc.likedBy.includes(userId)) {
+    //   return res.status(400).send({ error: "User already liked this post" });
+    // }
+
+    // Update the likedBy array and increment the likes count
+
+    if (action == "like") {
+      postDoc.likes += 1;
+      postDoc.likedBy.push(userId);
+      console.log("liked")
+    } else {
+      postDoc.likes -= 1;
+      postDoc.likedBy = postDoc.likedBy.filter(id => id === userId);
+      console.log("disliked" + userId)
+    }    
+    await postDoc.save();
+
+    res.json({
+      success: true,
+      likes: postDoc.likes,
+      username: postDoc.author._id,
+    });
+  } catch (error) {
+    res.status(500).send({ error: "An error occurred while liking the post" });
+  }
+});
+
+// POST route to handle unliking a post
+app.post("/post/unlike/:id", async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const postDoc = await PostModel.findById(id);
+    if (!postDoc) {
+      return res.status(404).send({ error: "Post not found" });
+    }
+
+    const index = postDoc.likedBy.indexOf(userId);
+    if (index === -1) {
+      return res.status(400).send({ error: "User has not liked this post" });
+    }
+
+    // Update the likedBy array and decrement the likes count
+    postDoc.likedBy.splice(index, 1);
+    postDoc.likes -= 1;
+    await postDoc.save();
+
+    res.json({ success: true, likes: postDoc.likes });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ error: "An error occurred while unliking the post" });
+  }
+});
+
 app.get("/post", async (req, res) => {
   res.json(
     await Post.find()
@@ -246,7 +313,9 @@ app.get("/post", async (req, res) => {
 
 app.get("/post/:id", async (req, res) => {
   const { id } = req.params;
-  const postDoc = await Post.findById(id).populate("author", ["username"]);
+  const postDoc = await Post.findByIdAndUpdate(id, {
+    $inc: { views: 0.5 },
+  }).populate("author", ["username"]);
   res.json(postDoc);
 });
 
@@ -285,7 +354,9 @@ app.delete("/deletecomment/:id", async (req, res) => {
       try {
         const { id } = req.params;
         const postInfo = req.body;
-        const post = await Post.findById(postInfo.postId);
+        const post = await Post.findById(postInfo.postId).populate("author", [
+          "username",
+        ]);
         if (!post) {
           return res.status(404).json({ error: "Post not found" });
         }
@@ -294,7 +365,7 @@ app.delete("/deletecomment/:id", async (req, res) => {
         );
         await post.save();
         await Comment.findByIdAndDelete(id);
-        res.status(200).json({ message: "Comment deleted successfully" });
+        res.status(200).json(post);
       } catch (error) {
         console.error("Error deleting comment:", error);
         res.status(500).json({ error: "Internal server error" });

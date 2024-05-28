@@ -10,7 +10,7 @@ const commentSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // Assuming your user model is named 'User'
     },
-    username: String,
+    // username: String,
   },
 });
 

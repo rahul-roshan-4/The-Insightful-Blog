@@ -1,6 +1,5 @@
+import React from "react";
 import "./App.css";
-import Post from "./Post";
-import Header from "./Header";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import IndexPage from "./pages/IndexPage";
@@ -13,7 +12,8 @@ import EditPost from "./pages/EditPost";
 
 function App() {
   return (
-    <UserContextProvider>
+    <React.StrictMode>
+      <UserContextProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<IndexPage />} />
@@ -24,7 +24,8 @@ function App() {
             <Route path="/edit/:id" element={<EditPost />} />
           </Route>
         </Routes>
-    </UserContextProvider>
+      </UserContextProvider>
+    </React.StrictMode>
   );
 }
 

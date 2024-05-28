@@ -4,9 +4,11 @@ import { formatISO9075 } from "date-fns";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 import Comment from "./Comment";
+import Like from "./Like";
 
 export default function PostPage() {
   const [postInfo, setPostInfo] = useState(null);
+  const [likeCount, setLikeCount] = useState(0);
   const { userInfo } = useContext(UserContext);
   const [redirect, setRedirect] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -19,9 +21,22 @@ export default function PostPage() {
         setPostInfo(postInfo);
       })
       .catch((error) => console.error("Error fetching post:", error));
-  }, [postInfo]);
+  }, [id]);
 
   if (!postInfo) return "";
+
+  const handleLike = () => {
+    fetch(process.env.React_App_Host_Api + "/post/like/" + postInfo.id, {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setLikeCount(likeCount + 1);
+        }
+      })
+      .catch((error) => console.error("Error liking post:", error));
+  };
 
   const handleDelete = () => {
     fetch(process.env.React_App_Host_Api + "/post/" + id, {
@@ -39,10 +54,11 @@ export default function PostPage() {
         console.error("Error deleting post:", error);
       });
   };
-  // console.log(postInfo.author._id);
+
   const handleAddComment = () => {
-    const authorName = postInfo.author.username;
-    // console.log(postInfo.author)
+    if (!newComment.trim()) {
+      return;
+    }
     fetch(process.env.React_App_Host_Api + "/add-comment", {
       method: "POST",
       headers: {
@@ -51,20 +67,20 @@ export default function PostPage() {
       body: JSON.stringify({
         postId: id,
         text: newComment,
-        authorName: authorName,
+        // authorName: userInfo.username,
       }),
       credentials: "include",
     })
       .then((response) => response.json())
       .then((updatedPostInfo) => {
         setPostInfo(updatedPostInfo);
-        setNewComment(""); // Clear the input field after adding the comment
+
+        setNewComment("");
       })
       .catch((error) => {
         console.error("Error adding comment:", error);
       });
   };
-  // console.log(postInfo);
 
   if (redirect) {
     return <Navigate to={"/"} />;
@@ -73,7 +89,7 @@ export default function PostPage() {
   return (
     <div className="post-page">
       <h1>{postInfo.title}</h1>
-      <time>{formatISO9075(new Date(postInfo.createdAt))}</time>
+      {/* <time>{formatISO9075(new Date(postInfo.createdAt))}</time> */}
       <div className="author">by @{postInfo.author.username}</div>
       {userInfo.id === postInfo.author._id && (
         <div className="edit-row">
@@ -93,17 +109,20 @@ export default function PostPage() {
       </div>
       <div
         className="content"
-        dangerouslySetInnerHTML={{ __html: postInfo.content }}
+        dangerouslySetInnerHTML={{
+          __html: `<div style="font-size: 18px;">${postInfo.content}</div>`,
+        }}
       />
 
+      <Like postInfo={postInfo} userInfo={userInfo.id} />
       <div className="comments-section">
         <h2>Comments</h2>
         {postInfo.comments.map((comment) => (
           <Comment
-            // key={comment}
+            key={comment._id}
             comment={comment}
             postInfo={postInfo}
-            // authorId={postInfo.author._id}
+            setPostInfo={setPostInfo}
           />
         ))}
 
@@ -117,7 +136,10 @@ export default function PostPage() {
           >
             <textarea
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={(e) => {
+                e.preventDefault();
+                setNewComment(e.target.value);
+              }}
               placeholder="Add a comment..."
             />
             <button type="submit">Add Comment</button>

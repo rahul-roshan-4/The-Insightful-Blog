@@ -56,11 +56,12 @@ div.post div.texts h2 {
 }
 div.post div.texts a {
   text-decoration: none;
-  color: inherit;
+  /* color: inherit; */
 }
+
 div.post p.info {
   margin: 24px 0;
-  color: #888;
+  /* color: #180303; */
   font-size: 1rem;
   font-weight: bold;
   display: flex;
@@ -147,7 +148,7 @@ div.post div.texts a {
 
 div.post p.info {
   margin: 24px 0;
-  color: #888;
+  /* color: #888; */
   font-size: 1rem;
   font-weight: bold;
   display: flex;
@@ -210,6 +211,13 @@ input {
   color: #555;
 }
 
+.login-message {
+  display: inline-block;
+  font: 1em sans-serif;
+  margin-left: 20px;
+}
+
+
 button {
   cursor: pointer;
   width: 100%;
@@ -217,12 +225,36 @@ button {
   border: none;
   color: white;
   padding: 15px 20px;
-  text-align: center;
   text-decoration: none;
+  align-items: center;
   display: inline-block;
   font-size: 16px;
   border-radius: 10px;
   transition: background-color 0.3s;
+}
+
+.like-container .edit-btn .icon {
+  margin-right: 10px; /* Adjust the margin to create space between the icon and the text */
+}
+
+.like-container .likes-count {
+  margin-left: 10px; /* Adjust the margin to create space between the text and the like count */
+}
+
+.like-container {
+  display: flex;
+  align-items: center;
+}
+
+.likes-count {
+  font-size: 18px; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  color: #333; /* Dark grey color */
+  background-color: #f0f0f0; /* Light grey background */
+  padding: 12px 15px; /* Padding around the text */
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
 button:hover {
@@ -278,7 +310,7 @@ div.post-page time {
   text-align: center;
   display: block;
   font-size: 1rem;
-  color: #aaa;
+  /* color: #aaa; */
   margin: 10px 0;
 }
 
@@ -303,26 +335,6 @@ div.content li {
   justify-content: center;
   margin-top: 15px;
   margin-bottom: 15px;
-}
-
-.edit-btn,
-.delete-btn {
-  background-color: #333;
-  color: #fff;
-  border-radius: 5px;
-  padding: 15px 25px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  margin-right: 15px;
-  width: 130px;
-  height: 40px;
-  font: 1em sans-serif;
-}
-
-.edit-btn:hover,
-.delete-btn:hover {
-  background-color: #555;
 }
 
 .icon {
@@ -414,7 +426,7 @@ div.post-page time {
   text-align: center;
   display: block;
   font-size: 1rem;
-  color: #aaa;
+  /* color: #aaa; */
   margin: 10px 0;
 }
 div.author {
@@ -443,19 +455,42 @@ div.content li {
   background-color: #333;
   color: #fff;
   border-radius: 5px;
-  padding: 15px 25px;
+  padding: 20px 20px;
   text-decoration: none;
   display: flex;
   align-items: center;
-  margin-right: 15px;
+  margin-right: 10px;
   width: 130px;
-  height: 40px;
-  font: 1em sans-serif;
+  height: 50px;
+  font: 1.1em sans-serif;
+}
+
+.like-btn {
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  width: 102px;
+  height: 50px;
+  font: 1.1em sans-serif;
+}
+
+.edit-btn .icon,
+.delete-btn .icon {
+  margin-right: 10px; /* Adjust the margin to increase or decrease the distance */
 }
 
 .edit-btn:hover,
 .delete-btn:hover {
   background-color: #555;
+}
+
+.like-btn:hover {
+  background-color: rgb(92, 26, 36); /* Change color on hover */
 }
 
 .icon {
