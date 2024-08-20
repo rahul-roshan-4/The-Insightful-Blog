@@ -6,7 +6,7 @@ import { faThumbsUp as farThumbsUp } from "@fortawesome/free-regular-svg-icons";
 export default function Like({ postInfo, userInfo }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(postInfo.likes);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Initially assuming user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const action = isLiked ? "unlike" : "like";
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function Like({ postInfo, userInfo }) {
       return;
     }
     
-    fetch(`${process.env.React_App_Host_Api}/post/like/${postInfo._id}`, {
+    fetch(`${process.env.React_App_Host_Api}/likes/post/like/${postInfo._id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

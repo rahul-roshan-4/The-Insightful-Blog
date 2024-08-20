@@ -6,23 +6,18 @@ export default function Comment({ comment, postInfo, setPostInfo }) {
   const { userInfo } = useContext(UserContext);
 
   useEffect(() => {
-    fetch(process.env.React_App_Host_Api + "/addComment/" + comment).then(
+    fetch(process.env.React_App_Host_Api + "/comments/getComment/" + comment).then(
       (response) => {
         response.json().then((commentInfo) => {
           setCommentInfo(commentInfo);
-          // console.log(postInfo);
         });
       }
     );
   }, [comment]);
 
-  // const handleDelete = () => {
-  //   handleDeleteComment(comment); // Call the function with the comment ID
-  // };
-
   const deleteComment = () => {
     try {
-      fetch(process.env.React_App_Host_Api + "/deletecomment/" + comment, {
+      fetch(process.env.React_App_Host_Api + "/comments/deletecomment/" + comment, {
         method: "DELETE",
         credentials: "include",
         headers: {

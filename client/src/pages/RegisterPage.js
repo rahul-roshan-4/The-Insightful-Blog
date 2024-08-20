@@ -7,11 +7,14 @@ export default function RegisterPage() {
   const [redirect, setRedirect] = useState("");
   async function register(ev) {
     ev.preventDefault();
-    const response = await fetch(process.env.React_App_Host_Api + "/register", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      process.env.React_App_Host_Api + "/auth/register",
+      {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     if (response.status === 200) {
       alert("registration successful!\nYou will be redirected to login page.");
       setRedirect(true);

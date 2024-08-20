@@ -26,7 +26,7 @@ export default function PostPage() {
   if (!postInfo) return "";
 
   const handleLike = () => {
-    fetch(process.env.React_App_Host_Api + "/post/like/" + postInfo.id, {
+    fetch(process.env.React_App_Host_Api + "/likes/post/like/" + postInfo.id, {
       method: "POST",
     })
       .then((response) => response.json())
@@ -59,7 +59,7 @@ export default function PostPage() {
     if (!newComment.trim()) {
       return;
     }
-    fetch(process.env.React_App_Host_Api + "/add-comment", {
+    fetch(process.env.React_App_Host_Api + "/comments/add-comment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +67,6 @@ export default function PostPage() {
       body: JSON.stringify({
         postId: id,
         text: newComment,
-        // authorName: userInfo.username,
       }),
       credentials: "include",
     })

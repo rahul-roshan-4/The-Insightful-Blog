@@ -9,12 +9,15 @@ export default function LoginPage() {
   const { setUserInfo } = useContext(UserContext);
   async function login(ev) {
     ev.preventDefault();
-    const response = await fetch(process.env.React_App_Host_Api + "/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
+    const response = await fetch(
+      process.env.React_App_Host_Api + "/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      }
+    );
 
     if (response.ok) {
       response.json().then((userInfo) => {
