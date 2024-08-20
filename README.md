@@ -9,3 +9,7 @@
 • Utilized Node.js for server-side development, handling API requests, and managing server resources.
 
 • Technologies Used: HTML, CSS, React.js, Node.js, Express.js, MongoDB, JSON Web Tokens (JWT).
+
+Deployment website : https://the-insightful-blog-frontend-rahul.onrender.com/
+
+(It takes around 50 seconds for the server to start)
